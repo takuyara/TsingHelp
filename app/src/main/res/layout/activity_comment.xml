@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/shopName2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="店名"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/TextView1"
+        android:layout_below="@id/shopName2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="全部评价"
+        android:textSize="20sp"/>
+    <ListView
+        android:layout_below="@id/TextView1"
+        android:id="@+id/commentList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"/>
+
+    <com.example.tsinghelp.NavigationLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

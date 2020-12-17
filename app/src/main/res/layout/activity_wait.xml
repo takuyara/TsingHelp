@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="拼单等待中"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/peopleNearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="附近人数"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginVertical="15dp"/>
+        <TextView
+            android:id="@+id/timeCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="等待时间"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+        <ImageView
+            android:id="@+id/orderAddressMap2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/map"
+            android:layout_marginVertical="25dp"/>
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消拼单"
+            android:layout_gravity="right"
+            android:layout_marginRight="35dp"/>
+    </LinearLayout>
+
+    <com.example.tsinghelp.NavigationLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
