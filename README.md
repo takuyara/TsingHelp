@@ -1,2 +1,6 @@
 # TsingHelp
-The OFFICIAL repository for group of Software Engineering Fall 2020.
+前端：
+支持版本：Android 8.1+
+使用SDK：API27
+在编译前端之前，修改local.properties最后一行的sdk-dir，修改为自己的SDK目录。
+默认目录为：C\:\\Users\\%UserName%\\AppData\\Local\\Android\\Sdk
