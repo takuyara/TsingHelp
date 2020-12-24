@@ -6,6 +6,8 @@
 
 使用SDK：API27
 
+Check your Android SDK directory and change it in local.properties.
+
 在编译前端之前，修改local.properties最后一行的sdk-dir，修改为自己的SDK目录。
 
 默认目录为：C:\Users\%UserName%\AppData\Local\Android\Sdk
