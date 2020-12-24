@@ -39,7 +39,8 @@ class TsRoute {
 			elseif (($type & TS_ROUTE_KEY_FILES) && array_key_exists($key, $_FILES))
 				$ts_args[$key] = $_FILES[$key];
 			else {
-				echo 'key ', $key,' not found';
+				echo 'key [', $key,'] not found';
+				var_dump($_POST);
 				return FALSE;//TODO Error!
 			}
 		}

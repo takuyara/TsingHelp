@@ -5,7 +5,6 @@
  * @package Tsinghelp
  */
 
-ts_load('user/login');
-// todo
+ts_load('user/user');
 
 /* End of /ts-mods.php */

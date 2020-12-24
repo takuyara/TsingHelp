@@ -20,9 +20,6 @@ require 'ts-libs.php';
 /* loads modules */
 require 'ts-mods.php';
 
-/* connects to database */
-require 'ts-db.php';
-
 /* runs requested procedures */
 TsRoute::run(TsRoute::uri());
 
