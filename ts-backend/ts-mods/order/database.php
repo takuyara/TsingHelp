@@ -1,16 +1,6 @@
 <?php
 
-// $servername = "localhost";
-// $username = "root";
-// $password = "123";
-// $dbname = "myDB";
-// global $conn;
-// $conn = new mysqli($servername, $username, $password, $dbname);
-// if ($conn->connect_error) {
-// 	die("连接失败: " . $conn->connect_error);
-// } 
-// echo "连接成功\n";
-// echo "<br />";
+//数据库创建和查询时   '-' 全用的'_'
 
 //users
 用户token：u-token
@@ -53,7 +43,7 @@ $sql = "CREATE TABLE users (
 店家配送费：s-fee
 店家起送费：s-price-min
 店家第几条到第几条：s-from、s-to
-$discount = json_encode(array(30=>8,40=>15));
+$discount = serialize(array(30=>8,40=>15));  //满减用一个关联列表，序列化后存入数据库
 $sql = "INSERT INTO stores (s_id,s_deliv,s_fee,s_discount) VALUES (2,400,20,$discount)";
 $sql = "CREATE TABLE stores (
 	s_id INT(30),
@@ -83,7 +73,7 @@ $sql = "CREATE TABLE commodities (
 	p_s_id VARCHAR(30),
 	p_s_name VARCHAR(30),
 	p_name VARCHAR(30),
-	p_pic VARCHAR(30),
+	p_pic VARBINARY(200),
 	p_price VARCHAR(30)
 )";
 
@@ -136,7 +126,7 @@ $sql = "CREATE TABLE cbs (
     cb_status INT(2),
     cb_from INT(6),
     cb_to INT(6),
-    cb_pay VARCHAR(30),
+    cb_pay VARBINARY(200),
     cb_done_time INT(30),
     cb_done bit(1),
     cb_g_id INT(6),
