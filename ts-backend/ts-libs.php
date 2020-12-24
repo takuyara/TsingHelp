@@ -8,5 +8,6 @@
 #ts_import('ts/value');
 #ts_import('ts/error');
 ts_import('ts/route');
+ts_import('ts/db');
 
 /* End of /ts-libs.php */
