@@ -60,7 +60,7 @@ public class NewActivity extends AppCompatActivity {
                 params.put("u-token", Config.utoken);
                 params.put("u-coord-x", Double.toString(x));
                 params.put("u-coord-y", Double.toString(y));
-                client.post(Config.myHost + "/update-u-coord/", params, new AsyncHttpResponseHandler() {
+                client.post(Config.myHost + "/update-u-coord", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         Log.v("Success", "Success uploading message");
