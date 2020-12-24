@@ -19,8 +19,8 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class Config {
     public static String gitURL = "https://takuyara.github.io/index.html";
-    public static String myHost = null;
-    public static String getUrl() {
+    public static String myHost = null, uid, utoken;
+    public static void getUrl() {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -43,7 +43,7 @@ public class Config {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return myHost;
+        //return myHost;
         /*
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(gitURL, new AsyncHttpResponseHandler() {
@@ -82,5 +82,8 @@ public class Config {
         }
         Log.v("Host", Config.myHost);
          */
+    }
+    void login() {
+        
     }
 }

@@ -32,15 +32,7 @@
         android:layout_marginVertical="15dp"
         android:layout_gravity="center"
         android:src="@drawable/map"/>
-    <EditText
-        android:id="@+id/orderAddressText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginVertical="10dp"
-        android:layout_marginHorizontal="30dp"
-        android:hint="请输入拼单地点"
-        android:gravity="center"/>
+
     <Button
         android:id="@+id/orderStart"
         android:layout_marginVertical="20dp"
