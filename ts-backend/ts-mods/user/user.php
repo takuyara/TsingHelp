@@ -11,27 +11,29 @@ class UserHandler {
 	public static function login($args) {
 		global $ts_db;
 		$uid = $args['u-id'];
-		$pwd = self::hash_pwd($args['u-pwd']);
-		$result = array('msg' => 'unknown error', 'u-id' => '', 'u-token' => '');
+		$pwd = $args['u-pwd'];
+		$result = array('msg' => 'unknown error', 'u-token' => '');
 		if (!self::valid_uid($uid))
 			$result['msg'] = 'invalid uid';
 		elseif (!self::__uid_exists($uid)) {
+			$hashed_pwd = self::hash_pwd($pwd);
 			$token = self::gen_token();
-			$exe = $ts_db->exec('INSERT INTO ' . self::$TABLE_USERS . ' (uid, pwd, token) VALUES (\'' . self::escape($uid) . '\', \'' . self::escape($pwd) . '\', \'' . self::escape($token) . '\')');
+			$exe = $ts_db->exec('INSERT INTO ' . self::$TABLE_USERS . ' (uid, hashed_pwd, token) VALUES (\'' . self::escape($uid) . '\', \'' . self::escape($hashed_pwd) . '\', \'' . self::escape($token) . '\')');
 			if ($exe) {
-				$result['msg'] = 'ok';
-				$result['u-id'] = $uid;
+				$result['msg'] = 'signup: ok';
 				$result['u-token'] = $token;
 			}
 			else {
-				$result['msg'] = 'could not create user';
+				$result['msg'] = 'signup: could not create user';
 			}
 		}
 		else {
-			if (self::__uid_exists($uid) && self::__check_pwd($uid, $pwd))
-				$result['token'] = self::__renew_token($uid);
+			if (self::__check_pwd($uid, $pwd)) {
+				$result['msg'] = 'login: ok';
+				$result['u-token'] = self::__renew_token($uid);
+			}
 			else
-				$result['msg'] = 'invalid login';
+				$result['msg'] = 'login: wrong password';
 		}
 		echo json_encode($result);
 	}
@@ -85,24 +87,24 @@ class UserHandler {
 	}
 	private static function __check_pwd($uid, $pwd) {
 		global $ts_db;		
-		$pwd = self::hash_pwd($pwd);
-		$res = $ts_db->fetch1('SELECT 1 FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' AND hashed_pwd=\'' . self::escape($pwd) . '\' LIMIT 1');
-		return $res !== NULL;
+		$res = $ts_db->fetch1('SELECT hashed_pwd FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' LIMIT 1');
+		return password_verify($pwd, $res['hashed_pwd']);
 	}
 	private static function __update_pwd($uid, $pwd) {
 		global $ts_db;
 		$pwd = self::hash_pwd($pwd);
-		return $ts_db->update('UPDATE ' . self::$TABLE_USERS . 'SET hashed_pwd=\'' . self::escape($pwd) . '\' WHERE uid=\'' . self::escape($uid) . '\'');
+		return $ts_db->exec('UPDATE ' . self::$TABLE_USERS . ' SET hashed_pwd=\'' . self::escape($pwd) . '\' WHERE uid=\'' . self::escape($uid) . '\'');
 	}
 	private static function __check_token($uid, $token) {
 		global $ts_db;
-		$res = $ts_db->fetch1('SELECT');
-		return ($token === $res['token']);
+		$res = $ts_db->fetch1('SELECT 1 FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' AND token=\'' . self::escape($token) . '\' LIMIT 1');
+		return $res !== NULL;
 	}
 	private static function __renew_token($uid) {
 		global $ts_db;
 		$token = self::gen_token();
-		return $ts_db->exec('UPDATE');
+		$ts_db->exec('UPDATE ' . self::$TABLE_USERS . 'SET token=\'' . self::escape($token) . '\' WHERE uid=\'' . self::escape($uid) . '\'');
+		return $token;
 	}
 	private static function __clear_token($uid) {
 		global $ts_db;
