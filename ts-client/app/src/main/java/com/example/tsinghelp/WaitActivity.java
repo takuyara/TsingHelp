@@ -9,18 +9,10 @@ import android.widget.Button;
 
 public class WaitActivity extends AppCompatActivity {
 
-    private Button cancelButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait);
-        cancelButton = (Button) findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(WaitActivity.this, PayActivity.class);
-                startActivity(intent);
-            }
-        });
+
     }
 }
