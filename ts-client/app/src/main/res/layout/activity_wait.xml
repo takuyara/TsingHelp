@@ -41,13 +41,6 @@
             android:layout_gravity="center"
             android:src="@drawable/map"
             android:layout_marginVertical="25dp"/>
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="取消拼单"
-            android:layout_gravity="right"
-            android:layout_marginRight="35dp"/>
     </LinearLayout>
 
     <com.example.tsinghelp.NavigationLayout
