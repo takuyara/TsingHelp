@@ -11,7 +11,7 @@ class UserHandler {
 		$uid = $args['u-id'];
 		$pwd = $args['u-pwd'];
 		$result = array('token' => 'invalid login');
-		if (self::____id_exists($uid) && self::__check_pwd($uid, $pwd))
+		if (self::__uid_exists($uid) && self::__check_pwd($uid, $pwd))
 				$result['token'] = self::__renew_token($uid);
 		echo json_encode($result);
 	}
@@ -49,6 +49,7 @@ class UserHandler {
 		echo json_encode($result);
 	}
 	public static function hash_pwd($pwd) {
+		$pwd = sha256($pwd);
 		$pwd = sha256(TsConfig::get('user', 'pwd_salt0') . $pwd);
 		$pwd = sha256(TsConfig::get('user', 'pwd_salt1') . $pwd);
 		$pwd = sha256(TsConfig::get('user', 'pwd_salt2') . $pwd);
