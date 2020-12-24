@@ -9,6 +9,7 @@ class TsDB {
 	private $__conn;
 	public function __construct() {
 		$this->__conn = new mysqli(TsConfig::get('db', 'host'), TsConfig::get('db', 'user'), TsConfig::get('db', 'pwd'), TsConfig::get('db', 'db_name'));
+		$this->__conn->set_charset(TsConfig::get('db', 'charset'));
 	}
 	public function __destruct() {
 		$this->__conn->close();
@@ -24,4 +25,3 @@ class TsDB {
 $ts_db = new TsDB();
 
 /* End of /ts-db.php */
-

@@ -53,11 +53,7 @@ class UserHandler {
 		echo json_encode($result);
 	}
 	public static function hash_pwd($pwd) {
-		$pwd = sha256($pwd);
-		$pwd = sha256(TsConfig::get('user', 'pwd_salt0') . $pwd);
-		$pwd = sha256(TsConfig::get('user', 'pwd_salt1') . $pwd);
-		$pwd = sha256(TsConfig::get('user', 'pwd_salt2') . $pwd);
-		return $pwd;
+		return password_hash($pwd);
 	}
 	public static function gen_token() {
 		static $__charset = array(
