@@ -68,6 +68,10 @@ class UserHandler {
 	public static function escape($str) {
 		return mysqli_real_escape_string($str);
 	}
+	public static function valid_uid($uid) {
+		$len = strlen($uid);
+		return $len >= 4 && $len <= 60;
+	}
 	private static function __uid_exists($uid) {
 		$res = $ts_db->fetch1('SELECT 1 FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' LIMIT 1');
 		return $res !== NULL;
