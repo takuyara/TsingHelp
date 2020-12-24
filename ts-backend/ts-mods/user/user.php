@@ -73,12 +73,12 @@ class UserHandler {
 		return mysqli_real_escape_string($str);
 	}
 	private static function __uid_exists($uid) {
-		$res = $ts_db->query_1('SELECT 1 FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' LIMIT 1');
+		$res = $ts_db->fetch1('SELECT 1 FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' LIMIT 1');
 		return $res !== NULL;
 	}
 	private static function __check_pwd($uid, $pwd) {
 		$pwd = self::hash_pwd($pwd);
-		$res = $ts_db->query_1('SELECT 1 FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' AND hashed_pwd=\'' . self::escape($pwd) . '\' LIMIT 1');
+		$res = $ts_db->fetch1('SELECT 1 FROM ' . self::$TABLE_USERS . ' WHERE uid=\'' . self::escape($uid) . '\' AND hashed_pwd=\'' . self::escape($pwd) . '\' LIMIT 1');
 		return $res !== NULL;
 	}
 	private static function __update_pwd($uid, $pwd) {
@@ -86,7 +86,7 @@ class UserHandler {
 		return $ts_db->update('UPDATE ' . self::$TABLE_USERS . 'SET hashed_pwd=\'' . self::escape($pwd) . '\' WHERE uid=\'' . self::escape($uid) . '\'');
 	}
 	private static function __check_token($uid, $token) {
-		$res = $ts_db->query_1('SELECT');
+		$res = $ts_db->fetch1('SELECT');
 		return ($token === $res['token'];
 	}
 	private static function __renew_token($uid) {
