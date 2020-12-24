@@ -1,8 +1,8 @@
 <?php if (!defined('TS_DEV')) { header('HTTP/1.1 403 Forbidden'); die(); }
 /**
- * DB Connection
+ * DB Library
  *
- * @package Tsinghelp
+ * @package Tsinghelp/Libraries/TsDB
  */
 
 class TsDB {
@@ -20,8 +20,11 @@ class TsDB {
 	public function fetch1($sql) {
 		return $this->__conn->query($sql)->fetch_assoc();
 	}
+	public function escape($str) {
+		return $this->__conn->real_escape_string($str);
+	}
 };
 
 $ts_db = new TsDB();
 
-/* End of /ts-db.php */
+/* End of /ts-libs/ts/db.php */
