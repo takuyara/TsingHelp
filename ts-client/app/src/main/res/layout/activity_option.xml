@@ -24,19 +24,21 @@
             android:layout_marginRight="35dp"
             android:text="就是这家了！"
             android:textSize="18sp" />
+
     </LinearLayout>
 
 
-    <ExpandableListView
-        android:layout_below="@id/linerLayout1"
-        android:id="@+id/expandableList"
+    <ListView
+        android:id="@+id/shopList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </ExpandableListView>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linerLayout1"
+        android:layout_marginTop="2dp" />
 
     <com.example.tsinghelp.NavigationLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+
+    </com.example.tsinghelp.NavigationLayout>
 
 </RelativeLayout>

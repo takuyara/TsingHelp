@@ -43,6 +43,7 @@ public class NewActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /*
         Timer timer = new Timer();
         AsyncHttpClient client = new AsyncHttpClient();
         timer.schedule(new TimerTask() {
@@ -72,6 +73,6 @@ public class NewActivity extends AppCompatActivity {
                 });
             }
         }, 0, 20000);
-
+        */
     }
 }
