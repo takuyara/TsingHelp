@@ -242,7 +242,7 @@ class OrderHandler {
 		$o_id = $args['o-id'];
 
 		global $ts_db;
-		$sql = "SELECT * FROM ts_orders WHERE o_id=\'" . $ts_db->escape($o_id) . "\'";
+		$sql = "SELECT * FROM ts_orders WHERE o_id=\'" . $ts_db->escape($o_id) . "\' LIMIT 1";
 		$row = $ts_db->fetch1($sql);
 		echo json_encode(array('paid' => $row['o_paid']));
 	}
@@ -255,17 +255,16 @@ class OrderHandler {
 		$u_token = $args['u-token'];
 		$cb_id = $args['cb-id'];
 
-		$sql = "SELECT * FROM ts_cbs WHERE cb_id=$cb_id";
-		$result = $ts_db->exec($sql);
-		$row = $result->fetch_assoc();
+		$sql = "SELECT * FROM ts_cbs WHERE cb_id=\'" . $ts_db->escape($cb_id) . "\' LIMIT 1";
+		$row = $ts_db->fetch1($sql);
 		$cb_done_time = $row['cb_done_time'];
 		$cb_done = $row['cb_done'];
 		$cb_g_id = $row['cb_g_id'];
 
 		$result = array(
-					'cb_done_time' => $cb_done_time,
-					'cb_done' => $cb_done,
-					'cb_g_id' => $cb_g_id
+			'cb_done_time' => $cb_done_time,
+			'cb_done' => $cb_done,
+			'cb_g_id' => $cb_g_id
 		);
 		
 		echo json_encode($result);
@@ -277,12 +276,12 @@ class OrderHandler {
 	public static function get_cb_history($args){
 		$u_id = $args['u-id'];
 		$u_token = $args['u-token'];
-		$from = $args['from'];
-		$to = $args['to'];
+		$from = (int) $args['from'];
+		$to = (int) $args['to'];
 
 		$S = GetRandStr(40);
 		$to = $to - $from + 1;
-		$sql = "SELECT * FROM orders WHERE o_u_id=$u_id LIMIT $from,$to";
+		$sql = "SELECT * FROM orders WHERE o_u_id=\'" . $ts_db->escape($u_id) . "\' LIMIT $from,$to";
 		$result = $ts_db->query($sql);
 		$cb_history = array();
 		while($row = $result->fetch_assoc()) 
@@ -296,19 +295,19 @@ class OrderHandler {
 			$cb = array();
 			$commodity_list = array();
 			$length = count($o_p_ids);
-			$pics=array();
-			$pic_num=0;
+			//$pics=array();
+			//$pic_num=0;
 			for($x=0;$x<$length;$x++)
 			{
 				$p_id = $o_p_ids[$x];
-				$sql = "SELECT * FROM commodities WHERE p_s_id=$s_id and p_id=$p_id";
+				$sql = "SELECT * FROM commodities WHERE p_s_id=\'" . $ts_db->escape($s_id) . "\' and p_id=\'" . $ts_db->escape($p_id) . "\'";
 				$result2 = $ts_db->query($sql);
 				$row2 = $result2->fetch_assoc();
 				$p_name = $row2['p_name'];
 				$p_price = $row2['p_price'];
-				$p_pic = $row2['p_pic'];
-				array_push($pics,$p_pic);
-				$pic_num += 1;
+				//$p_pic = $row2['p_pic'];
+				//array_push($pics,$p_pic);
+				//$pic_num += 1;
 				$p_n = $o_p_n[$x];
 				$commodity = array();
 				$commodity['p_id'] = $p_id;
@@ -324,14 +323,14 @@ class OrderHandler {
 			$cb['ps'] = $commodity_list;
 			array_push($cb_history, $cb);
 		}
-		$cb_history['pic_num'] = $pic_num;
-		echo $S."\n";
-		echo json_encode($cb_history)."\n";
-		for($x=0;$x<$pic_num;$x++){
-			echo $S."\n";
-			echo $pics[$x]."\n";
-		}
-		echo $S."\n";
+		//$cb_history['pic_num'] = $pic_num;
+		//echo $S."\n";
+		echo json_encode($cb_history);//echo "\n";
+		//for($x=0;$x<$pic_num;$x++){
+		//	echo $S."\n";
+		//	echo $pics[$x]."\n";
+		//}
+		//echo $S."\n";
 	}
 };
 
