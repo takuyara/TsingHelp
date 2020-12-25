@@ -104,7 +104,7 @@ class UserHandler {
 	private static function __renew_token($uid) {
 		global $ts_db;
 		$token = self::gen_token();
-		$ts_db->exec('UPDATE ' . self::$TABLE_USERS . 'SET token=\'' . self::escape($token) . '\' WHERE uid=\'' . self::escape($uid) . '\'');
+		$ts_db->exec('UPDATE ' . self::$TABLE_USERS . ' SET token=\'' . self::escape($token) . '\' WHERE uid=\'' . self::escape($uid) . '\'');
 		return $token;
 	}
 	private static function __clear_token($uid) {

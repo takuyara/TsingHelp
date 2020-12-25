@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
             StringBuffer sBuffer = new StringBuffer();
             for (int i = 0; i < encoded.length; ++i) {
                 String temp = Integer.toHexString(encoded[i] & 0xff);
-                if (temp.length() == 1)  sBuffer.append("0");
+                if (temp.length() == 1) sBuffer.append("0");
                 sBuffer.append(temp);
             }
             passwordHash = sBuffer.toString();
@@ -71,6 +71,8 @@ public class LoginActivity extends AppCompatActivity {
                     String msg = jsonObject.getString("msg");
                     Config.utoken = jsonObject.getString("u-token");
                     Log.e("msg=", msg);
+                    Log.e("token", Config.utoken);
+                    Log.e("response", jsonString);
                     if (!msg.equals("signup: ok") && !msg.equals("login: ok")) {
                         //Log.e("Not ok", msg);
                         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();

@@ -11,64 +11,54 @@ class OrderHandler {
 /**
  * get new order
  */	
-	public static function new_order($args){
+	public static function new_order($args) {
 		$u_id = $args['u-id'];
 		$u_token = $args['u-token'];
 		$s_id = $args['s-id'];
 		$o_p_ids = $args['o-p-ids'];
 		$o_p_n = $args['o-p-n'];
 
-		$sql = "SELECT * FROM users WHERE u_id=$u_id";
+		$o_id = (string)$u_id."".(string)time();
+		//查询订单原价
+		$length=count($o_p_ids);
+		$o_raw_price = 0;
+		for($x=0;$x<$length;$x++)
+		{
+			$sql = "SELECT p_price FROM commodities WHERE p_id=\'" . $ts_db->escape($o_p_ids[$x]) . "\' AND p_s_id=\'" . $ts_db->escape($s_id) . "\'";
+			$result = $ts_db->query($sql);
+			while($row = $result->fetch_assoc()) 
+			{
+				$o_raw_price += $row['p_price'] * $o_p_n[$x];
+			}
+		}
+		//查询店家名称
+		$sql = "SELECT * FROM stores WHERE s_id=$s_id";
 		$result = $ts_db->query($sql);
 		$row = $result->fetch_assoc();
-		if($row['u_authent']==0)
+		$s_name = $row['s_name'];
+		$discount = unserialize($row['discount']);
+		$o_p_ids = json_encode($o_p_ids);
+		$o_p_n = json_encode($o_p_n);
+		//新建订单插入数据库
+		$index = 0;
+		$o_price = $o_raw_price;
+		foreach($discount as $price=>$price_minus)
 		{	
-			echo json_encode("Unauthenticated");
+			if ($o_raw_price < $price)
+			{
+				break;
+			}
+			$index = $price;
 		}
-		else
-		{	
-			$o_id = (string)$u_id."".(string)time();
-			//查询订单原价
-			$length=count($o_p_ids);
-			$o_raw_price = 0;
-			for($x=0;$x<$length;$x++)
-			{
-				$sql = "SELECT p_price FROM commodities WHERE p_id=$o_p_ids[$x] AND p_s_id=$s_id";
-				$result = $ts_db->query($sql);
-				while($row = $result->fetch_assoc()) 
-				{
-					$o_raw_price += $row['p_price'] * $o_p_n[$x];
-				}
-			}
-			//查询店家名称
-			$sql = "SELECT * FROM stores WHERE s_id=$s_id";
-			$result = $ts_db->query($sql);
-			$row = $result->fetch_assoc();
-			$s_name = $row['s_name'];
-			$discount = unserialize($row['discount']);
-			$o_p_ids = json_encode($o_p_ids);
-			$o_p_n = json_encode($o_p_n);
-			//新建订单插入数据库
-			$index = 0;
-			$o_price = $o_raw_price;
-			foreach($discount as $price=>$price_minus)
-			{	
-				if ($o_raw_price < $price)
-				{
-					break;
-				}
-				$index = $price;
-			}
-			if($index != 0)
-			{
-				$o_price = $o_raw_price - $discount[$index];
-			}
-			$sql = "INSERT INTO 
-			orders (o_id,o_u_id,o_s_id,o_s_name,o_p_ids,o_p_n,o_price,o_raw_price,o_confirm,o_paid)
-			VALUES ($o_id,$u_id,$s_id,$s_name,'$o_p_ids','$o_p_n',$o_price,$o_raw_price,0,0)";
-			$ts_db->query($sql); 
-			echo json_encode($o_id);
-		} 	
+		if($index != 0)
+		{
+			$o_price = $o_raw_price - $discount[$index];
+		}
+		$sql = "INSERT INTO 
+		orders (o_id,o_u_id,o_s_id,o_s_name,o_p_ids,o_p_n,o_price,o_raw_price,o_confirm,o_paid)
+		VALUES ($o_id,$u_id,$s_id,$s_name,'$o_p_ids','$o_p_n',$o_price,$o_raw_price,0,0)";
+		$ts_db->query($sql); 
+		echo json_encode($o_id);
 	}
 
 /**
@@ -251,10 +241,10 @@ class OrderHandler {
 		$u_token = $args['u-token'];
 		$o_id = $args['o-id'];
 
-		$sql = "SELECT * FROM orders WHERE o_id=$o_id";
-		$result = $ts_db->query($sql);
-		$row = $result->fetch_assoc();
-		echo json_encode($row['o_paid']);
+		global $ts_db;
+		$sql = "SELECT * FROM ts_orders WHERE o_id=\'" . $ts_db->escape($o_id) . "\' LIMIT 1";
+		$row = $ts_db->fetch1($sql);
+		echo json_encode(array('paid' => $row['o_paid']));
 	}
 
 /**
@@ -265,17 +255,16 @@ class OrderHandler {
 		$u_token = $args['u-token'];
 		$cb_id = $args['cb-id'];
 
-		$sql = "SELECT * FROM cbs WHERE cb_id=$cb_id";
-		$result = $ts_db->query($sql);
-		$row = $result->fetch_assoc();
+		$sql = "SELECT * FROM ts_cbs WHERE cb_id=\'" . $ts_db->escape($cb_id) . "\' LIMIT 1";
+		$row = $ts_db->fetch1($sql);
 		$cb_done_time = $row['cb_done_time'];
 		$cb_done = $row['cb_done'];
 		$cb_g_id = $row['cb_g_id'];
 
 		$result = array(
-					'cb_done_time' => $cb_done_time,
-					'cb_done' => $cb_done,
-					'cb_g_id' => $cb_g_id
+			'cb_done_time' => $cb_done_time,
+			'cb_done' => $cb_done,
+			'cb_g_id' => $cb_g_id
 		);
 		
 		echo json_encode($result);
@@ -287,12 +276,12 @@ class OrderHandler {
 	public static function get_cb_history($args){
 		$u_id = $args['u-id'];
 		$u_token = $args['u-token'];
-		$from = $args['from'];
-		$to = $args['to'];
+		$from = (int) $args['from'];
+		$to = (int) $args['to'];
 
 		$S = GetRandStr(40);
 		$to = $to - $from + 1;
-		$sql = "SELECT * FROM orders WHERE o_u_id=$u_id LIMIT $from,$to";
+		$sql = "SELECT * FROM orders WHERE o_u_id=\'" . $ts_db->escape($u_id) . "\' LIMIT $from,$to";
 		$result = $ts_db->query($sql);
 		$cb_history = array();
 		while($row = $result->fetch_assoc()) 
@@ -306,19 +295,19 @@ class OrderHandler {
 			$cb = array();
 			$commodity_list = array();
 			$length = count($o_p_ids);
-			$pics=array();
-			$pic_num=0;
+			//$pics=array();
+			//$pic_num=0;
 			for($x=0;$x<$length;$x++)
 			{
 				$p_id = $o_p_ids[$x];
-				$sql = "SELECT * FROM commodities WHERE p_s_id=$s_id and p_id=$p_id";
+				$sql = "SELECT * FROM commodities WHERE p_s_id=\'" . $ts_db->escape($s_id) . "\' and p_id=\'" . $ts_db->escape($p_id) . "\'";
 				$result2 = $ts_db->query($sql);
 				$row2 = $result2->fetch_assoc();
 				$p_name = $row2['p_name'];
 				$p_price = $row2['p_price'];
-				$p_pic = $row2['p_pic'];
-				array_push($pics,$p_pic);
-				$pic_num += 1;
+				//$p_pic = $row2['p_pic'];
+				//array_push($pics,$p_pic);
+				//$pic_num += 1;
 				$p_n = $o_p_n[$x];
 				$commodity = array();
 				$commodity['p_id'] = $p_id;
@@ -334,14 +323,14 @@ class OrderHandler {
 			$cb['ps'] = $commodity_list;
 			array_push($cb_history, $cb);
 		}
-		$cb_history['pic_num'] = $pic_num;
-		echo $S."\n";
-		echo json_encode($cb_history)."\n";
-		for($x=0;$x<$pic_num;$x++){
-			echo $S."\n";
-			echo $pics[$x]."\n";
-		}
-		echo $S."\n";
+		//$cb_history['pic_num'] = $pic_num;
+		//echo $S."\n";
+		echo json_encode($cb_history);//echo "\n";
+		//for($x=0;$x<$pic_num;$x++){
+		//	echo $S."\n";
+		//	echo $pics[$x]."\n";
+		//}
+		//echo $S."\n";
 	}
 };
 
@@ -376,13 +365,13 @@ TsRoute::hook('order/get_cb',
 	),
 	array('OrderHandler', 'get_cb'),
 );
-TsRoute::hook('order/confirm_o_pay',
-array(
-	'u-id' => TS_ROUTE_KEY_POST,
-	'u-token' => TS_ROUTE_KEY_POST,
-	'o-id' => TS_ROUTE_KEY_POST,
-),
-array('OrderHandler', 'confirm_o_pay'),
+TsRoute::hook('confirm-o-pay',
+	array(
+		'u-id' => TS_ROUTE_KEY_POST,
+		'u-token' => TS_ROUTE_KEY_POST,
+		'o-id' => TS_ROUTE_KEY_POST,
+	),
+	array('OrderHandler', 'confirm_o_pay'),
 );
 TsRoute::hook('order/get_cb_deliv',
 	array(
