@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('TS_DEV')) { header('HTTP/1.1 403 Forbidden'); die(); }
 
 /**
  * Order Module
@@ -24,7 +24,7 @@ class OrderHandler {
 		$o_raw_price = 0;
 		for($x=0;$x<$length;$x++)
 		{
-			$sql = "SELECT p_price FROM commodities WHERE p_id=\'" . $ts_db->escape($o_p_ids[$x]) . "\' AND p_s_id=\'" . $ts_db->escape($s_id) . "\'";
+			$sql = "SELECT p_price FROM ts_products WHERE p_id=\'" . $ts_db->escape($o_p_ids[$x]) . "\' AND p_s_id=\'" . $ts_db->escape($s_id) . "\'";
 			$result = $ts_db->query($sql);
 			while($row = $result->fetch_assoc()) 
 			{
@@ -32,7 +32,7 @@ class OrderHandler {
 			}
 		}
 		//查询店家名称
-		$sql = "SELECT * FROM stores WHERE s_id=$s_id";
+		$sql = "SELECT * FROM ts_stores WHERE s_id=\'" . $ts_db->escape($s_id) . "\'";
 		$result = $ts_db->query($sql);
 		$row = $result->fetch_assoc();
 		$s_name = $row['s_name'];
@@ -56,9 +56,9 @@ class OrderHandler {
 		}
 		$sql = "INSERT INTO 
 		orders (o_id,o_u_id,o_s_id,o_s_name,o_p_ids,o_p_n,o_price,o_raw_price,o_confirm,o_paid)
-		VALUES ($o_id,$u_id,$s_id,$s_name,'$o_p_ids','$o_p_n',$o_price,$o_raw_price,0,0)";
-		$ts_db->query($sql); 
-		echo json_encode($o_id);
+		VALUES (\'" . $ts_db->escape($o_id) . "\',\'" . $ts_db->escape($u_id) . "\',\'" . $ts_db->escape($s_id) . "\',\'" . $ts_db->escape($s_name) . "\',\'" . $ts_db->escape($o_p_ids) . "\',\'" . $ts_db->escape($o_p_n) . "\',\'" . $ts_db->escape($o_price) . "\',\'" . $ts_db->escape($o_raw_price) . "\',0,0)";
+		$ts_db->exec($sql); 
+		echo json_encode('msg' => $o_id ? 'ok' : 'failed');
 	}
 
 /**
@@ -347,7 +347,7 @@ function GetRandStr($length){
 	return $randstr;
 }
 
-TsRoute::hook('order/new_order',
+TsRoute::hook('new-order',
 	array(
 		'u-id' => TS_ROUTE_KEY_POST,
 		'u-token' => TS_ROUTE_KEY_POST,
@@ -357,7 +357,7 @@ TsRoute::hook('order/new_order',
 	),
 	array('OrderHandler', 'new_order'),
 );
-TsRoute::hook('order/get_cb',
+TsRoute::hook('get-cb',
 	array(
 		'u-id' => TS_ROUTE_KEY_POST,
 		'u-token' => TS_ROUTE_KEY_POST,
@@ -373,7 +373,7 @@ TsRoute::hook('confirm-o-pay',
 	),
 	array('OrderHandler', 'confirm_o_pay'),
 );
-TsRoute::hook('order/get_cb_deliv',
+TsRoute::hook('get-cb-deliv',
 	array(
 		'u-id' => TS_ROUTE_KEY_POST,
 		'u-token' => TS_ROUTE_KEY_POST,
@@ -381,7 +381,7 @@ TsRoute::hook('order/get_cb_deliv',
 	),
 	array('OrderHandler', 'get_cb_deliv'),
 );
-TsRoute::hook('order/get_cb_history',
+TsRoute::hook('get-cb-history',
 	array(
 		'u-id' => TS_ROUTE_KEY_POST,
 		'u-token' => TS_ROUTE_KEY_POST,
