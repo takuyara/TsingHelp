@@ -6,5 +6,6 @@
  */
 
 ts_load('user/user');
+ts_load('yyj/merchant_handler');
 
 /* End of /ts-mods.php */

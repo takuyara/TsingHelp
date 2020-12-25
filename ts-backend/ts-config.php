@@ -25,7 +25,7 @@ class TsConfig
 			),
 			'user' => array(
 				'expire' => 60 * 60 * 24 * 30,
-				'token_len' => 16,
+				'token_len' => 31,
 				'salt0' => 'salt0_here',
 				'salt1' => 'salt1_here',
 				'salt2' => 'salt2_here',
