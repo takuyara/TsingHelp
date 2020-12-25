@@ -63,14 +63,9 @@ class UserHandler {
 		return password_hash($pwd, PASSWORD_DEFAULT);
 	}
 	public static function gen_token() {
-		static $__charset = array(
-			'a','b','c','d','e','f','g','h','i','j','k','l','m',
-			'n','o','p','q','r','s','t','u','v','w','x','y','z',
-			'A','B','C','D','E','F','G','H','I','J','K','L','M',
-			'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-			'0','1','2','3','4','5','6','7','8','9'
-		);
-		return implode(array_rand($__charset, TsConfig::get('user', 'token_len')));
+		static $__charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+		$__charset = str_shuffle($__charset);
+		return substr($__charset, 0, TsConfig::get('user', 'token_len'));
 	}
 	public static function escape($str) {
 		global $ts_db;
