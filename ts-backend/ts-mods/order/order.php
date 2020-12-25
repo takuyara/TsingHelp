@@ -255,8 +255,8 @@ class OrderHandler {
 		$u_token = $args['u-token'];
 		$cb_id = $args['cb-id'];
 
-		$sql = "SELECT * FROM cbs WHERE cb_id=$cb_id";
-		$result = $ts_db->query($sql);
+		$sql = "SELECT * FROM ts_cbs WHERE cb_id=$cb_id";
+		$result = $ts_db->exec($sql);
 		$row = $result->fetch_assoc();
 		$cb_done_time = $row['cb_done_time'];
 		$cb_done = $row['cb_done'];
