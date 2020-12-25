@@ -18,7 +18,9 @@ class TsDB {
 		return $this->__conn->query($sql);
 	}
 	public function fetch1($sql) {
-		return $this->__conn->query($sql)->fetch_assoc();
+		$res = $this->__conn->query($sql);
+		if (!$res) return NULL;
+		else return $res->fetch_assoc();
 	}
 	public function escape($str) {
 		return $this->__conn->real_escape_string($str);
