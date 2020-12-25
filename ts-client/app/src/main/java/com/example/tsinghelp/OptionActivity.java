@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ import cz.msebera.android.httpclient.Header;
  */
 public class OptionActivity extends AppCompatActivity {
     private Button verifyButton;
+    public int[] sid = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,14 +50,16 @@ public class OptionActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(new String(responseBody));
                     JSONArray jsonArray = jsonObject.getJSONArray("ss");
                     data = new String[jsonArray.length()];
+                    OptionActivity.this.sid = new int[jsonArray.length()];
                     for (int i = 0; i < jsonArray.length(); ++i) {
                         JSONObject jo = jsonArray.getJSONObject(i);
                         String name = jo.getString("s-name");
-                        int deliv = jo.getInt("s-deliv");
-                        int price = jo.getInt("s-price");
-                        double rate = jo.getInt("s-rating");
-                        data[i] = name + "  配送时间：" + Integer.toString(deliv)
-                                + "\n人均价格：" + Integer.toString(price) + "  评分：" + Double.toString(rate);
+                        double deliv = jo.getDouble("s-deliv");
+                        double price = jo.getDouble("s-price");
+                        double rate = jo.getDouble("s-rating");
+                        OptionActivity.this.sid[i] = jo.getInt("s-id");
+                        data[i] = name + "  配送时间：" + Double.toString(deliv)
+                                + "\n人均价格：" + Double.toString(price) + "  评分：" + Double.toString(rate);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -63,6 +67,14 @@ public class OptionActivity extends AppCompatActivity {
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(OptionActivity.this, android.R.layout.simple_list_item_1, data);
                 ListView listView = findViewById(R.id.shopList);
                 listView.setAdapter(adapter);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(OptionActivity.this, OptionActivity2.class);
+                        intent.putExtra("sid", OptionActivity.this.sid[position]);
+                        startActivity(intent);
+                    }
+                });
             }
 
             @Override
