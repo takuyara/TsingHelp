@@ -17,12 +17,14 @@
             android:textColor="@color/black"
             android:gravity="center"
             android:layout_weight="1"/>
+
         <EditText
-            android:id="@+id/orderTime"
+            android:id="@+id/timePicker"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="时间格式XX:XX:XX"/>
+            android:ems="10"
+            android:inputType="time" />
     </LinearLayout>
 
     <ImageView

@@ -27,7 +27,9 @@ public class Config {
     public static String gitURL = "https://takuyara.github.io/index.html?";
     public static String myHost = null, uid, utoken;
     private static boolean flag = false;
+    public static boolean gotPartner = false;
     private static Timer timer = new Timer();
+    public static int oid;
     public static Map<Integer, Boolean> chmap = new HashMap<>();
     public static void getUrl() {
         Calendar calendar = Calendar.getInstance();

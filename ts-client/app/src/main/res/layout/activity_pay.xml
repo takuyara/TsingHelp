@@ -66,13 +66,15 @@
                 android:layout_height="match_parent"
                 android:visibility="invisible"
                 android:layout_weight="2"/>
+
             <Button
                 android:id="@+id/verifyPayment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="我已支付"
+                android:layout_marginRight="30dp"
                 android:layout_weight="1"
-                android:layout_marginRight="30dp"/>
+                android:onClick="onClick"
+                android:text="我已支付" />
         </LinearLayout>
 
     </LinearLayout>
