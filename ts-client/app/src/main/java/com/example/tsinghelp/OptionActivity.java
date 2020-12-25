@@ -86,13 +86,6 @@ public class OptionActivity extends AppCompatActivity {
                 Log.e("Statuscode=", Integer.toString(statusCode));
             }
         });
-        verifyButton = (Button) findViewById(R.id.verifyShop);
-        verifyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(OptionActivity.this, OptionActivity2.class);
-                startActivity(intent);
-            }
-        });
+
     }
 }
