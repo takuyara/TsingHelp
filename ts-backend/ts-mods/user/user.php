@@ -59,6 +59,12 @@ class UserHandler {
 		}
 		echo json_encode($result);
 	}
+	public static function check_token($args) {
+		$uid = $args['u-id'];
+		$token = $args['u-token'];
+		if (!self::__check_token($uid, $token))
+			exit('invalid token');
+	}
 	public static function hash_pwd($pwd) {
 		return password_hash($pwd, PASSWORD_DEFAULT);
 	}
