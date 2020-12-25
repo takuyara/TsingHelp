@@ -40,7 +40,6 @@ class TsRoute {
 				$ts_args[$key] = $_FILES[$key];
 			else {
 				echo 'key [', $key,'] not found';
-				var_dump($_POST);
 				return FALSE;//TODO Error!
 			}
 		}

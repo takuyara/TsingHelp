@@ -106,6 +106,7 @@ TsRoute::hook(
 		's-from' => TS_ROUTE_KEY_POST, 
 		's-to' => TS_ROUTE_KEY_POST, 
 	),
+	array('UserHandler','check_token'),
 	array('MerchantHandler','get_merchant_outline_info')
 );
 
@@ -116,5 +117,6 @@ TsRoute::hook(
 		'u-token' => TS_ROUTE_KEY_POST, 
 		's-id' => TS_ROUTE_KEY_POST, 
 	),
+	array('UserHandler','check_token'),
 	array('MerchantHandler','get_merchant_info')
 );
