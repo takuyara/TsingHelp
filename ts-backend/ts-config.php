@@ -20,7 +20,7 @@ class TsConfig
 				'host' => 'localhost', // including port
 				'user' => 'root',
 				'pwd' => '',
-				'charset' => 'utf8mb4',
+				'charset' => 'utf8',
 				'db_name' => 'test',
 			),
 			'user' => array(

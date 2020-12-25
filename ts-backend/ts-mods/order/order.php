@@ -12,6 +12,7 @@ class OrderHandler {
  * get new order
  */	
 	public static function new_order($args) {
+		global $ts_db;
 		$u_id = $args['u-id'];
 		$u_token = $args['u-token'];
 		$s_id = $args['s-id'];
@@ -22,43 +23,50 @@ class OrderHandler {
 		//查询订单原价
 		$length=count($o_p_ids);
 		$o_raw_price = 0;
+		echo json_encode(array('msg' => 'ok'));
+		return;
 		for($x=0;$x<$length;$x++)
 		{
 			$sql = "SELECT p_price FROM ts_products WHERE p_id=\'" . $ts_db->escape($o_p_ids[$x]) . "\' AND p_s_id=\'" . $ts_db->escape($s_id) . "\'";
-			$result = $ts_db->query($sql);
-			while($row = $result->fetch_assoc()) 
+			$result = $ts_db->exec($sql);
+			while($result)
 			{
+				$row = $result->fetch_assoc();
+				if (!$row) break;
 				$o_raw_price += $row['p_price'] * $o_p_n[$x];
 			}
 		}
 		//查询店家名称
 		$sql = "SELECT * FROM ts_stores WHERE s_id=\'" . $ts_db->escape($s_id) . "\'";
-		$result = $ts_db->query($sql);
-		$row = $result->fetch_assoc();
-		$s_name = $row['s_name'];
-		$discount = unserialize($row['discount']);
-		$o_p_ids = json_encode($o_p_ids);
-		$o_p_n = json_encode($o_p_n);
-		//新建订单插入数据库
-		$index = 0;
-		$o_price = $o_raw_price;
-		foreach($discount as $price=>$price_minus)
-		{	
-			if ($o_raw_price < $price)
-			{
-				break;
+		$row = $ts_db->fetch1($sql);
+		if (!$row) {
+			echo json_encode(array('msg' => 'no such store'));
+		} else {
+			$s_name = $row['s_name'];
+			$discount = unserialize($row['discount']);
+			$o_p_ids = json_encode($o_p_ids);
+			$o_p_n = json_encode($o_p_n);
+			//新建订单插入数据库
+			$index = 0;
+			$o_price = $o_raw_price;
+			foreach($discount as $price=>$price_minus)
+			{	
+				if ($o_raw_price < $price)
+				{
+					break;
+				}
+				$index = $price;
 			}
-			$index = $price;
+			if($index != 0)
+			{
+				$o_price = $o_raw_price - $discount[$index];
+			}
+			$sql = "INSERT INTO 
+			ts_orders (o_id,o_u_id,o_s_id,o_s_name,o_p_ids,o_p_n,o_price,o_raw_price,o_confirm,o_paid)
+			VALUES (\'" . $ts_db->escape($o_id) . "\',\'" . $ts_db->escape($u_id) . "\',\'" . $ts_db->escape($s_id) . "\',\'" . $ts_db->escape($s_name) . "\',\'" . $ts_db->escape($o_p_ids) . "\',\'" . $ts_db->escape($o_p_n) . "\',\'" . $ts_db->escape($o_price) . "\',\'" . $ts_db->escape($o_raw_price) . "\',0,0)";
+			$ts_db->exec($sql); 
+			echo json_encode(array('msg' => $o_id ? 'ok' : 'failed'));
 		}
-		if($index != 0)
-		{
-			$o_price = $o_raw_price - $discount[$index];
-		}
-		$sql = "INSERT INTO 
-		ts_orders (o_id,o_u_id,o_s_id,o_s_name,o_p_ids,o_p_n,o_price,o_raw_price,o_confirm,o_paid)
-		VALUES (\'" . $ts_db->escape($o_id) . "\',\'" . $ts_db->escape($u_id) . "\',\'" . $ts_db->escape($s_id) . "\',\'" . $ts_db->escape($s_name) . "\',\'" . $ts_db->escape($o_p_ids) . "\',\'" . $ts_db->escape($o_p_n) . "\',\'" . $ts_db->escape($o_price) . "\',\'" . $ts_db->escape($o_raw_price) . "\',0,0)";
-		$ts_db->exec($sql); 
-		echo json_encode(array('msg' => $o_id ? 'ok' : 'failed'));
 	}
 
 /**
@@ -354,7 +362,7 @@ function GetRandStr($length){
 	return $randstr;
 }
 
-TsRoute::hook('new-order',
+TsRoute::hook('new-o',
 	array(
 		'u-id' => TS_ROUTE_KEY_POST,
 		'u-token' => TS_ROUTE_KEY_POST,
@@ -362,6 +370,7 @@ TsRoute::hook('new-order',
 		'o-p-ids' => TS_ROUTE_KEY_POST,
 		'o-p-n' => TS_ROUTE_KEY_POST,
 	),
+	array('UserHandler','check_token'),
 	array('OrderHandler', 'new_order'),
 );
 TsRoute::hook('get-cb',
@@ -370,6 +379,7 @@ TsRoute::hook('get-cb',
 		'u-token' => TS_ROUTE_KEY_POST,
 		'o-id' => TS_ROUTE_KEY_POST,
 	),
+	array('UserHandler','check_token'),
 	array('OrderHandler', 'get_cb'),
 );
 TsRoute::hook('confirm-o-pay',
@@ -378,6 +388,7 @@ TsRoute::hook('confirm-o-pay',
 		'u-token' => TS_ROUTE_KEY_POST,
 		'o-id' => TS_ROUTE_KEY_POST,
 	),
+	array('UserHandler','check_token'),
 	array('OrderHandler', 'confirm_o_pay'),
 );
 TsRoute::hook('get-cb-deliv',
@@ -386,6 +397,7 @@ TsRoute::hook('get-cb-deliv',
 		'u-token' => TS_ROUTE_KEY_POST,
 		'cb-id' => TS_ROUTE_KEY_POST,
 	),
+	array('UserHandler','check_token'),
 	array('OrderHandler', 'get_cb_deliv'),
 );
 TsRoute::hook('get-cb-history',
@@ -395,6 +407,7 @@ TsRoute::hook('get-cb-history',
 		'from' => TS_ROUTE_KEY_POST,
 		'to' => TS_ROUTE_KEY_POST,
 	),
+	array('UserHandler','check_token'),
 	array('OrderHandler', 'get_cb_history'),
 );
 
