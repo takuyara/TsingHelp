@@ -5,6 +5,7 @@ $TABLE_PRODUCTS = 'ts_products';
 
 if (TS_DEV) {
 	$ts_db->exec('DROP TABLE IF EXISTS ' . $TABLE_STORES);
+	$ts_db->exec('DROP TABLE IF EXISTS ' . $TABLE_PRODUCTS);
 }
 if (!$ts_db->exec('CREATE TABLE ' . $TABLE_STORES . ' (s_id INT AUTO_INCREMENT, s_name VARCHAR(63), s_icon VARCHAR(511), s_deliv FLOAT, s_price FLOAT, s_rating FLOAT, s_p_n FLOAT, s_fee FLOAT, s_price_min FLOAT, PRIMARY KEY (s_id)) ENGINE=InnoDB DEFAULT CHARSET=' . TsConfig::get('db', 'charset'))) {
 	echo 'could not create table ', $TABLE_STORES;
