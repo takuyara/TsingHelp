@@ -55,10 +55,10 @@ class OrderHandler {
 			$o_price = $o_raw_price - $discount[$index];
 		}
 		$sql = "INSERT INTO 
-		orders (o_id,o_u_id,o_s_id,o_s_name,o_p_ids,o_p_n,o_price,o_raw_price,o_confirm,o_paid)
+		ts_orders (o_id,o_u_id,o_s_id,o_s_name,o_p_ids,o_p_n,o_price,o_raw_price,o_confirm,o_paid)
 		VALUES (\'" . $ts_db->escape($o_id) . "\',\'" . $ts_db->escape($u_id) . "\',\'" . $ts_db->escape($s_id) . "\',\'" . $ts_db->escape($s_name) . "\',\'" . $ts_db->escape($o_p_ids) . "\',\'" . $ts_db->escape($o_p_n) . "\',\'" . $ts_db->escape($o_price) . "\',\'" . $ts_db->escape($o_raw_price) . "\',0,0)";
 		$ts_db->exec($sql); 
-		echo json_encode('msg' => $o_id ? 'ok' : 'failed');
+		echo json_encode(array('msg' => $o_id ? 'ok' : 'failed'));
 	}
 
 /**
@@ -72,7 +72,7 @@ class OrderHandler {
 
 		$S = GetRandStr(40);
 		//查询该订单是否已创建拼单
-		$sql = "SELECT * FROM orders WHERE o_id=$o_id";
+		$sql = "SELECT * FROM ts_orders WHERE o_id=$o_id";
 		$result = $ts_db->query($sql);
 		$row = $result->fetch_assoc();
 		$s_id = $row['o_s_id'];
@@ -83,7 +83,7 @@ class OrderHandler {
 		{	
 			$o_price = $row['o_price'];
 			$cb_id = $row['o_cb_id'];
-			$sql = "SELECT * FROM cbs WHERE cb_id=$cb_id";
+			$sql = "SELECT * FROM ts_cbs WHERE cb_id=$cb_id";
 			$result = $ts_db->query($sql);
 			$row = $result->fetch_assoc();
 			$cb_start_time = $row['cb_start_time'];
@@ -115,7 +115,7 @@ class OrderHandler {
 			{
 				if(time()-$cb_start_time>600)
 				{
-					$sql = "UPDATE cbs SET cb_status=2 WHERE cb_id=$cb_id";
+					$sql = "UPDATE ts_cbs SET cb_status=2 WHERE cb_id=$cb_id";
 					$ts_db->query($sql);
 					echo $S."\n";
 					echo json_encode('Timeout')."\n";
@@ -132,7 +132,7 @@ class OrderHandler {
 		else   //未创建拼单
 		{	
 			//查询用户点云位置
-			$sql = "SELECT * FROM users WHERE u_id=$u_id";
+			$sql = "SELECT * FROM ts_users WHERE u_id=$u_id";
 			$result = $ts_db->query($sql);
 			$row = $result->fetch_assoc();
 			$u_coord_x = $row['u_coord_x'];
@@ -244,7 +244,14 @@ class OrderHandler {
 		global $ts_db;
 		$sql = "SELECT * FROM ts_orders WHERE o_id=\'" . $ts_db->escape($o_id) . "\' LIMIT 1";
 		$row = $ts_db->fetch1($sql);
-		echo json_encode(array('paid' => $row['o_paid']));
+		$arr = array('msg' => '', 'paid' => false);
+		if (!$row) {
+			$arr['msg'] = 'no such order';
+		} else {
+			$arr['msg'] = 'found';
+			$arr['paid'] = (bool) $row['o_paid'];
+		}
+		echo json_encode($arr);
 	}
 
 /**
