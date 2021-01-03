@@ -38,9 +38,11 @@ public class OptionActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("u-id", Config.uid);
         params.put("u-token", Config.utoken);
+        if (Config.utoken != null)
+            Log.e("user token: ", Config.utoken);
         params.put("s-from", "1");
         params.put("s-to", "1000");
-        Log.e("HOST:", Config.myHost);
+        //Log.e("HOST:", Config.myHost);
         client.post(Config.myHost + "/ts-backend/get-ss", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -63,6 +65,7 @@ public class OptionActivity extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    return ;
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(OptionActivity.this, android.R.layout.simple_list_item_1, data);
                 ListView listView = findViewById(R.id.shopList);
@@ -83,13 +86,6 @@ public class OptionActivity extends AppCompatActivity {
                 Log.e("Statuscode=", Integer.toString(statusCode));
             }
         });
-        verifyButton = (Button) findViewById(R.id.verifyShop);
-        verifyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(OptionActivity.this, OptionActivity2.class);
-                startActivity(intent);
-            }
-        });
+
     }
 }

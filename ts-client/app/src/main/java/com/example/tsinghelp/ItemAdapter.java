@@ -45,7 +45,13 @@ public class ItemAdapter extends BaseAdapter {
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox.isChecked()) map.put(position, true); else map.remove(position);
+                if (checkBox.isChecked()) {
+                    map.put(position, true);
+                    Config.chmap.put(position, true);
+                } else {
+                    map.remove(position);
+                    Config.chmap.remove(position);
+                }
             }
         });
         checkBox.setSelected(map != null && map.containsKey(position));

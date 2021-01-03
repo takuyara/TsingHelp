@@ -9,3 +9,9 @@ if (!$ts_db->exec('CREATE TABLE ' . $TABLE_USERS . ' (uid VARCHAR(63), hashed_pw
 	echo 'could not create table ' . $TABLE_USERS;
 	exit(-1);
 }
+if (TS_DEV) {
+	if (!$ts_db->exec('INSERT INTO ' . $TABLE_USERS . ' (uid, hashed_pwd, token) VALUES (\'admin\', \'$2y$10$T1SqgEKTpmL5/ksngWkVCuzZYTK.XKG6zFgyZB.rNB9de1.mNe0ju\', \'test_token\')')) { // pwd = 1234
+		echo 'could not insert into ' . $TABLE_USERS;
+		exit(-1);
+	}
+}

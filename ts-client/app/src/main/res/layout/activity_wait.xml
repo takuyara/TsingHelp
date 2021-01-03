@@ -8,23 +8,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <TextView
+            android:id="@+id/stillWaiting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="拼单等待中"
-            android:textSize="24sp"
-            android:textColor="@color/black"
             android:layout_gravity="center"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="拼单等待中"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
+
         <TextView
             android:id="@+id/peopleNearby"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="附近人数"
-            android:textSize="18sp"
             android:layout_gravity="center"
+            android:layout_marginVertical="15dp"
             android:gravity="center"
-            android:layout_marginVertical="15dp"/>
+            android:text="附近人数："
+            android:textSize="18sp" />
         <TextView
             android:id="@+id/timeCost"
             android:layout_width="wrap_content"
